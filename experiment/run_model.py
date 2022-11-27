@@ -12,7 +12,7 @@ def decision(x, model, in_asset, total):
     Function that returns the recommended action (buy/sell/hold, amount) given the model inputs and the model itself
     x: inputs from the model - a priori time series data
     model: model object
-    amount: amount of asset in the portfolio; limits how much is possible to sell
+    amount: amount of unit stocks in the portfolio; limits how much is possible to sell
     '''
     # TODO read model and do prediction = model.predict(x)
     
@@ -21,7 +21,7 @@ def decision(x, model, in_asset, total):
     label = "buy" if prediction > 0.3 else ("sell" if prediction < -0.3 else "hold")
 
     if label == "sell":
-        return label, min(abs(prediction)*total, in_asset) 
+        return label, min(abs(prediction)*total, in_asset)
     elif label == "buy":
         return  label, min(abs(prediction)*total, total-in_asset) 
     
