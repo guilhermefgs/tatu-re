@@ -21,7 +21,7 @@ def decision(x, model, in_asset, total):
     label = "buy" if prediction > 0.3 else ("sell" if prediction < -0.3 else "hold")
 
     if label == "sell":
-        return label, min(abs(prediction)*total, in_asset) 
+        return label, min(abs(prediction)*total, in_asset)
     elif label == "buy":
         return  label, min(abs(prediction)*total, total-in_asset) 
     
