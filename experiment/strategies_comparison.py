@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import pandas as pd
-from getFinancialData import getFinancialData
+from data import get_data
 from run_model import decision
-from Portfolio import Portfolio
+from experiment.portfolio import Portfolio
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -48,26 +48,15 @@ def main():
     SP500_portfolio = Portfolio(initial_money, 0, 10)
 
     print("df.shape[0]: {}".format(df.shape[0]))
-    cash = []
-    sandp = []
     for i in range(df.shape[0]):
-        print("i: {}".format(i))
-        day = start + timedelta(days=i)
-        print(df["Close"].iloc[i])
+        print(">>>> ", i)
 
         portfolio.update_price(df["Close"].iloc[i])
-        [label, amount] = decision(df, None, portfolio.n_stocks*portfolio.unit_price, portfolio.total)
-        print("{} ${} in S&P".format(label, amount))
-        n_units = amount // portfolio.unit_price
-        if label == "buy":
-            portfolio.buy(n_units)
-        elif label == "sell":
-            portfolio.sell(n_units)
-        cash.append(portfolio.in_cash)
-        sandp.append(portfolio.n_stocks*portfolio.unit_price)
+        [label, amount] = portfolio.decision()
+
+        print(f"{label} ${amount} in S&P")
         portfolio.append_day()
-        print("Your portfolio mean {}".format(np.array(portfolio.timeseries).mean()))
-        print("{} of portfolio allocated in S&P".format(sandp[-1]))
+        print(f"Your portfolio mean {np.array(portfolio.timeseries).mean()}")
         SP500_portfolio.update_price(df["Close"].iloc[i])
         if i == 1:
             SP500_portfolio.buy(max_units)
@@ -79,7 +68,7 @@ def main():
         SP500_portfolio.timeseries,
         df.index
     )
-    plot_cash(cash, sandp, df.index)
+    # plot_cash(cash, sandp, df.index)
 
 if __name__ == "__main__":
     main()
