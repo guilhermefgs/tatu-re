@@ -12,7 +12,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 
 
-def send_email(df,action,amount):
+def send_email(df, action, amount):
     vetor_nomes=df['Nome']
     vetor_email=df['Email']
     

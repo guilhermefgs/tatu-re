@@ -6,6 +6,33 @@ from Portfolio import Portfolio
 import numpy as np
 import matplotlib.pyplot as plt
 
+def plot_benchmark_comparison(portfolio, benchmark, time_index) -> None:
+    """Function that plots portfolio versus benchmark results in time
+    :param portfolio: customer portfolio series
+    :param benchmark: benchmark series
+    """
+    plt.figure(1, (16,8))
+    plt.plot(time_index, portfolio, "-b", label="Your portfolio")
+    plt.plot(time_index, benchmark, "-r", label="S&P500 portfolio")
+    plt.title("Performance Comparison", fontsize=20)
+    plt.xlabel("Time (days)", fontsize=16)
+    plt.legend(loc="lower left", fontsize=12)
+    plt.ylim(0, 1500)
+    plt.ylabel("Money ($)", fontsize=16)
+    plt.grid()
+    plt.show()
+
+def plot_cash(cash, sandp, time_index):
+
+    plt.figure(2, (16,8))
+    plt.plot(time_index, cash, label="Cash")
+    plt.plot(time_index, sandp, label="S&P")
+    plt.title("Cash flow from client point of view ($)", fontsize=20)
+    plt.xlabel("Time (days)", fontsize=16)
+    plt.ylabel("Money ($)", fontsize=16)
+    plt.legend(fontsize=12)
+    plt.grid()
+    plt.show()
 
 # TODO check numbers
 def main():
@@ -13,6 +40,7 @@ def main():
     start = datetime(2020,3,1)
     end = datetime(2020,3,30)
     df = getFinancialData(start, end)
+    print(df.index)
 
     initial_money = 1000
     portfolio = Portfolio(initial_money, 0, 10)
@@ -46,27 +74,12 @@ def main():
         SP500_portfolio.append_day()
         print("S&P500 portfolio mean {}".format(np.array(SP500_portfolio.timeseries).mean()))
 
-    plt.figure(1, (16,8))
-    plt.plot(portfolio.timeseries, "-b", label="Your portfolio")
-    plt.plot(SP500_portfolio.timeseries, "-r", label="S&P500 portfolio")
-    plt.title("Performance comparison")
-    plt.xlabel("Time (days)")
-    plt.legend(loc="lower left")
-    plt.ylim(0, 1500)
-    plt.ylabel("Money ($)")
-    plt.grid()
-    # plt.show()
-
-    plt.figure(2, (16,8))
-    plt.plot(cash, label="Cash")
-    plt.plot(sandp, label="S&P")
-    plt.legend()
-    plt.grid()
-    plt.show()
-    
-
-    
-
+    plot_benchmark_comparison(
+        portfolio.timeseries, 
+        SP500_portfolio.timeseries,
+        df.index
+    )
+    plot_cash(cash, sandp, df.index)
 
 if __name__ == "__main__":
     main()
