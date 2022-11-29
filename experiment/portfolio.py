@@ -1,61 +1,98 @@
 import numpy as np
-from typing import Tuple
+import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
+from typing import List
+
 
 class Portfolio:
-    
-    def __init__(self, total=0, n_stocks=0, unit_price=0):
-        """
-        total: Total in cash + stock value
-        n_stocks: number of stocks in portfolio
-        in_cash: cash in portfolio
-        unit_price: (current) price of stock unit
-        timeseries: timeseries of portfolio performance over days
-        """
 
-        # TODO buy units
-        self.total = total
-        self.n_stocks = n_stocks
-        self.unit_price = unit_price
-        self.in_cash = self.total - self.n_stocks*self.unit_price
-        self.timeseries = [] # TODO make this an actual timeseries
+    def __init__(self, initial_capital, start_date) -> None:
 
-    def buy(self, n_units):
-        self.in_cash -= n_units*self.unit_price
-        self.n_stocks += n_units
+        # static variable
+        self.initial_capital: float = initial_capital
+        self.start_date: datetime = start_date
 
-    def sell(self, n_units):
-        self.buy(-n_units)
+        # dynamic variables
+        self.in_cash: float = self.initial_capital
+        self.in_asset: float = 0
+        self.n_stocks: int = 0
 
-    def update_price(self, new_price):
-        self.unit_price = new_price
-        self.total = self.in_cash + self.n_stocks*self.unit_price
+        # timeseries
+        self.operations: List = []
+        self.in_cash_series: List = []
+        self.in_asset_series: List = []
 
-    def append_day(self):
-        self.timeseries.append(self.total)
+    def update(self, date, price, quantity, action) -> None:
+        self.operations.append(
+            {
+                "date": date,
+                "price": price,
+                "quantity": quantity,
+                "action": action
+            }
+        )
+        amount = price * quantity
+        if action == "buy":
+            self.in_cash -= amount
+            self.in_asset += amount
+            self.n_stocks += quantity
+        elif action == "sell":
+            self.in_cash += amount
+            self.in_asset -= amount
+            self.n_stocks -= quantity
+        self.in_cash_series.append(self.in_cash)
+        self.in_asset_series.append(self.in_asset)
 
-    def decicion(self, x=None, model=None) -> Tuple[str, np.float64]:
-        """Function that returns the recommended action (buy/sell/hold, amount) 
-        given the model inputs and the model itself
-
-        :param x: input of the model - time series data
-        :param model: model object
-        """
-
+    def plot(self) -> None:
         
-        # TODO read model and do prediction = model.predict(x)
-        # TODO Strategy can be a class
-        in_asset = self.n_stocks*self.unit_price # or total - cash?
-        total = self.total
-        amount = 0
-        prediction = np.random.uniform(-1, 1)
-        label = "buy" if prediction > 0.3 else ("sell" if prediction < -0.3 else "hold")
+        total = np.add(self.in_cash_series, self.in_asset_series)
+        print(total)
+        #benchmark = How to simulate
+        timeindex = [self.start_date - timedelta(days=x) for x in range(len(total))]
 
-        if label == "sell":
-            label, amount = label, -min(abs(prediction)*total, in_asset)
-        elif label == "buy":
-            label, amount = label, min(abs(prediction)*total, total-in_asset) 
+        self.plot_in_cash_vs_asset(timeindex)
+
+    def plot_in_cash_vs_asset(self, timeindex) -> None:
+        plt.figure(1, (16,8))
+        plt.plot(timeindex, self.in_asset_series, "-b", label="In Asset")
+        plt.plot(timeindex, self.in_cash_series, "-r", label="In Cash")
+        plt.title("Cash flow of client point of view ($)", fontsize=20)
+        plt.xlabel("Time (days)", fontsize=16)
+        plt.ylim(0, 1500)
+        plt.ylabel("Money ($)", fontsize=16)
+        plt.legend(loc="lower left", fontsize=12)
+        plt.grid()
+        plt.show()
 
 
-        n_units = amount // self.unit_price
-        self.buy(n_units)
-        return label, amount
+    def compare_benchmark(self):
+        pass
+
+
+def plot_benchmark_comparison(portfolio, benchmark, time_index) -> None:
+    """Function that plots portfolio versus benchmark results in time
+    :param portfolio: customer portfolio series
+    :param benchmark: benchmark series
+    """
+    plt.figure(1, (16,8))
+    plt.plot(time_index, portfolio, "-b", label="Your portfolio")
+    plt.plot(time_index, benchmark, "-r", label="S&P500 portfolio")
+    plt.title("Performance Comparison", fontsize=20)
+    plt.xlabel("Time (days)", fontsize=16)
+    plt.legend(loc="lower left", fontsize=12)
+    plt.ylim(0, 1500)
+    plt.ylabel("Money ($)", fontsize=16)
+    plt.grid()
+    plt.show()
+
+def plot_cash(cash, sandp, time_index):
+
+    plt.figure(2, (16,8))
+    plt.plot(time_index, cash, label="Cash")
+    plt.plot(time_index, sandp, label="S&P")
+    plt.title("Cash flow from client point of view ($)", fontsize=20)
+    plt.xlabel("Time (days)", fontsize=16)
+    plt.ylabel("Money ($)", fontsize=16)
+    plt.legend(fontsize=12)
+    plt.grid()
+    plt.show()
