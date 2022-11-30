@@ -1,8 +1,8 @@
 
 from datetime import datetime
-from portfolio import Portfolio, Benchmark
-from recommendation_engine import Monkey
-from utils import get_data
+from tatu_re.portfolio import Portfolio, Benchmark
+from tatu_re.recommendation_engine import Monkey
+from tatu_re.utils import get_data
 
 #------------- S&P Data
 start = datetime(2020,3,1)

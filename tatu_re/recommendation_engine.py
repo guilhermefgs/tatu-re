@@ -1,16 +1,17 @@
+import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
-from utils import send_email
-from portfolio import Portfolio
+from tatu_re.utils import send_email
+from tatu_re.portfolio import Portfolio
 from typing import Tuple
 
 class RecommendationEngine(ABC):
 
     def __init__(self):
-        self.clients = [
+        self.clients = pd.DataFrame([
             {"Nome": "Christian", "Email": "christianleomil@gmail.com"},
             {"Nome": "Gui", "Email": "aateg.german@live.com"}
-        ]
+        ])
 
     @abstractmethod
     def recommendation(self):
@@ -53,5 +54,5 @@ class Monkey(RecommendationEngine):
         else:
             action, quantity = "hold", 0  # should do nothing
 
-        # send_email(self.clients, action, amount)
+        #send_email(self.clients, action, quantity)
         return action, quantity
