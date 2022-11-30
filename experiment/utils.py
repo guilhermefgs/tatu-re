@@ -1,20 +1,23 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 21 23:31:37 2022
-
-@author: chris
-"""
+import yfinance as yf
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 
+
+def get_data(start, end):
+    """
+    dateStart, dateStop: date start and end in string YYYY-MM-DD or datetime format
+    """
+    spyticker = yf.Ticker("SPY")
+    return spyticker.history(period="max", interval="1d", 
+                                   start=start, end=end, 
+                                   auto_adjust=True, rounding=True)
 
 def send_email(df, action, amount):
     vetor_nomes=df['Nome']
     vetor_email=df['Email']
+    amount = amount if isinstance(amount, str) else str(amount)
     
     length=len(vetor_email)
     print('The number of contacts in the list is:', length)
