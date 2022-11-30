@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from portfolio import Portfolio
+from portfolio import Portfolio, Benchmark
 from recommendation_engine import Monkey
 from utils import get_data
 
@@ -9,8 +9,9 @@ start = datetime(2020,3,1)
 end = datetime(2020,3,30)
 df = get_data(start, end)
 
-#------------- Create Portfolio and Manager
-customer = Portfolio(initial_capital=1000, start_date=start)
+#------------- Create Portfolio, Benchmark and Manager
+benchmark = Benchmark(initial_capital=1000, start_date=start, timeseries=df["Close"])
+customer = Portfolio(initial_capital=1000, start_date=start, benchmark=benchmark)
 manager = Monkey() # manager sends the email
 
 #------------- Simulation
@@ -27,5 +28,4 @@ for index, row in df.iterrows():
     )
 
 #------------- Plot results
-#print(customer.operations)
 customer.plot()
