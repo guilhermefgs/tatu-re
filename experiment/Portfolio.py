@@ -9,7 +9,6 @@ class Portfolio:
         timeseries: timeseries of portfolio performance over days
         """
 
-        # TODO buy units
         self.total = total
         self.n_stocks = n_stocks
         self.unit_price = unit_price
