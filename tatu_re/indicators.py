@@ -1,51 +1,66 @@
-from datetime import timedelta
-from datetime import datetime
-from talib import abstract
+from ta.trend import sma_indicator, psar_up, psar_down
+from ta.volume import on_balance_volume, acc_dist_index
+from ta.volatility import average_true_range, bollinger_mavg
+from ta.momentum import rsi, stoch, ultimate_oscillator
+
 import pandas as pd
 
-def calculate_indicators(df):
-    """
-    prediction_day: date in which the recomendation engine is used (datetime format)
-    """
-    # train_start = prediction_day - timedelta(days=120) #TODO define better this number
-    # train_end = prediction_day
-    # df = get_data(train_start, train_end)
-    df = df.dropna()
+def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    """Function to calculate indicators
 
-    inputs = {
-        'open': df["Open"],
-        'high': df["High"],
-        'low': df["Low"],
-        'close': df["Close"],
-        'volume': df["Volume"]
-    }
+    Trend Indicators
+    - SMA20: Simple moving average with 20 days window
+    - SMA50: Simple moving average with 50 days window
+    - PSAR_UP: Parabolic stop and reverse for upward trends
+    - PSAR_DOWN: Parabolic stop and reverse for downward trends
+
+    Volume Indicators
+    - OBV: On balance volume
+    - AD: Accumulation / Distribution indicator
+
+    Volatility Indicators
+    - ATR: Average true range
+    - BBANDS: Bollinger Bands with 20 days simple moving average (MA).
+
+    Momentum Indicators
+    - RSI: Relative Strength Index
+    - STOCHRSI: Stochastic Relative Strength Index
+    - ULTOSC: Ultimate Oscillator
+
+    :param df: DataFrame of the security, given by Yfinance
+    :return: DataFrame with all new series of indicators
+
+    """
+
+    df = df.dropna()
+    high = df["High"]
+    low = df["Low"]
+    close = df["Close"]
+    volume=df["Volume"]
 
     # Add all ta indicators    
     indicators = {
 
         # Trend indicators
-        "SMA20": abstract.SMA(inputs, timeperiod=20), # Simple moving average over 20 days
-        "SMA50": abstract.SMA(inputs, timeperiod=50), # Simple moving average over 50 days
-        "SAR": abstract.SAR(inputs), # Parabolic stop and reverse
-
+        "SMA20": sma_indicator(close, window=20),
+        "SMA50": sma_indicator(close, window=20),
+        "PSAR_UP": psar_up(high, low, close),
+        "PSAR_DOWN": psar_down(high, low, close),
+        
         # Volume indicators
-        "OBV": abstract.OBV(inputs), # On balance volume
-        "AD": abstract.AD(inputs), # Accumulation / Distribution indicator
+        "OBV": on_balance_volume(close, volume),
+        "AD": acc_dist_index(high, low, close, volume),
 
         # Volatility indicators
-        "ATR": abstract.ATR (inputs), # Average true range
-        "NATR": abstract.NATR(inputs), # Normalized Average True Range
-        "BBANDS ": abstract.BBANDS (inputs), # Bolinger bands
+        "ATR": average_true_range(high, low, close),
+        "BBANDS ": bollinger_mavg(close),
         
         # Momentum indicators
-        "RSI": abstract.RSI (inputs), # Relative Strength Index
-        "STOCHRSI": abstract.STOCHRSI(inputs), # Stochastic Relative Strength Index
-        "MACD ": abstract.MACD(inputs), # Moving Average Convergence/Divergence
-        "ULTOSC ": abstract.ULTOSC(inputs) # Ultimate Oscillator
+        "RSI": rsi(close),
+        "STOCHRSI": stoch(high, low, close),
+        "ULTOSC ": ultimate_oscillator(high, low, close) 
 
-        }
-
-    pd.DataFrame.from_dict(indicators)
+    }
     
-    return indicators
+    return pd.DataFrame.from_dict(indicators)
 
