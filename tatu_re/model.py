@@ -31,7 +31,10 @@ def train_model(X_train, y_train, save=False):
 
     if save:
         filename = 'decision_tree_v1.sav'
-        path_to_save = pathlib.Path(__file__).parent / f"models/{filename}"
+        path = pathlib.Path(__file__).parent / "models/"
+        if not path.exists(): 
+            path.mkdir()
+        path_to_save = path / filename
         pickle.dump(model, open(path_to_save, 'wb'))
 
     return model
