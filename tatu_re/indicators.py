@@ -45,7 +45,7 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
         "SMA20": sma_indicator(close, window=20),
         "SMA50": sma_indicator(close, window=20),
         "PSAR_UP": psar_up(high, low, close),
-        "PSAR_DOWN": psar_down(high, low, close),
+        #"PSAR_DOWN": psar_down(high, low, close),
         
         # Volume indicators
         "OBV": on_balance_volume(close, volume),

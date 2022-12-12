@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def calculate_target(price, window=10, log=True):
     """Function that calculate target
@@ -11,5 +12,7 @@ def calculate_target(price, window=10, log=True):
     :param log: return logaritmic difference
     """
     if log:
-        return np.log(price / price.shift(-window))
-    return (price - price.shift(-window)) / price
+        s = np.log(price.shift(-window)/price)
+    else:
+        s = (price.shift(-window) - price) / price
+    return pd.Series(s, name="target")
