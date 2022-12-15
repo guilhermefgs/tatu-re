@@ -1,6 +1,6 @@
-from indicators import calculate_indicators
-from target import calculate_target
-from utils import get_data
+from tatu_re.indicators import calculate_indicators
+from tatu_re.target import calculate_target
+from tatu_re.utils import get_data
 
 from sklearn.tree import DecisionTreeRegressor
 
@@ -10,7 +10,7 @@ import pickle
 
 def train_set():
     begin = datetime(2015,3,1)
-    end = datetime(2020,3,1)
+    end = datetime(2021,3,1)
     df = get_data(begin, end)
 
     indicators = calculate_indicators(df)
@@ -49,7 +49,3 @@ def load_model(filename):
     if path.exists():
         return pickle.load(open(path, 'rb'))
     raise FileExistsError(f" File: {filename} doesn't exist in tatu_re/models")
-
-if __name__ == "__main__":
-    X, y = train_set()
-    model = train_model(X, y, save=True)
