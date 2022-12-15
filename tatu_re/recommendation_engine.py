@@ -34,7 +34,7 @@ class Monkey(RecommendationEngine):
         :param portfolio: customer portfolio
         :return: quantity of stocks to buy or sell, zero means "do nothing" or "hold"
         """
-        u = np.random.uniform(-1, 1)
+        u = np.random.uniform(-1, 1.0)
         action = "buy" if u > 0.3 else ("sell" if u < -0.3 else "hold")
 
         if action == "buy":

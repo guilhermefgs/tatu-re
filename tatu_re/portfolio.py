@@ -45,6 +45,8 @@ class Portfolio:
         self.in_asset = self.n_stocks * price
         self.in_cash_series.append(self.in_cash)
         self.in_asset_series.append(self.in_asset)
+        
+        return
 
     def plot(self) -> None:
         benchmark = self.benchmark.get_timeseries()
@@ -77,6 +79,10 @@ class Portfolio:
         plt.ylabel("Money ($)", fontsize=16)
         plt.grid()
         plt.show()
+        
+    def return_variables(self):
+    
+        return self.in_asset_series,self.in_cash_series,self.benchmark.get_timeseries()
 
 class Benchmark:
 

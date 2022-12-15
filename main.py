@@ -11,16 +11,16 @@ df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
 benchmark = Benchmark(initial_capital=1000, start_date=start, timeseries=df["Close"])
-customer = Portfolio(initial_capital=1000, start_date=start, benchmark=benchmark)
+portfolio = Portfolio(initial_capital=1000, start_date=start, benchmark=benchmark)
 manager = Monkey() # manager sends the email
 
 #------------- Simulation
 
 for index, row in df.iterrows():
 
-    label, quantity = manager.recommendation(price=row["Close"], portfolio=customer)
+    label, quantity = manager.recommendation(price=row["Close"], portfolio=portfolio)
 
-    customer.update(
+    portfolio.update(
         date=index,
         price=row["Close"],
         quantity=quantity,
@@ -28,4 +28,4 @@ for index, row in df.iterrows():
     )
 
 #------------- Plot results
-customer.plot()
+portfolio.plot()
