@@ -12,18 +12,23 @@ import perform_simulation
 import analyse_data
 
 #-----------S&P DAta
-ticker="DAX.DE" #SPY for S&P 500, DAX.DE for DAX
+ticker="SPY" #SPY for S&P 500, DAX.DE for DAX, ^N225 for Nikkei
 start = datetime(1994,3,1)
 end=datetime.today()
-number_of_days=100
+number_of_days=60
 number_of_experiments=100
-year=2020
+year=2018
+list_mi=[-10,-1,1,10]
+z_inf=-2.33 #
+z_sup=2.33 #
 
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01','1995-05-01','2021-04-05','2022-06-01','1997-05-01'] #SnP
 # list_of_days=['2008-01-17','2012-09-24','2015-09-10','2017-03-20','2018-10-31','2008-01-22','2021-09-07'] #DAX.DE
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01']
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01']
-list_of_days=['2015-03-16','2020-01-22','2008-01-09','2011-04-05'] # low levels for DAX
+# list_of_days=['2015-03-16','2020-01-22','2008-01-09','2011-04-05'] # low levels for DAX
+# list_of_days=['2000-08-30','2008-04-18','2020-02-21','2021-11-11'] # low levels for SnP
+list_of_days=['2020-12-04','2009-04-20','2017-05-17','2004-07-09'] # high levels for SnP
 
 
 
@@ -34,10 +39,9 @@ df.to_excel('C:/Users/chris/OneDrive/Documentos/GitHub/tatu-re/'+'df.xlsx')
 
 
 
-#-------Splitting timeseries into periods for comparison of performance
+# -------Splitting timeseries into periods for comparison of performance
 list_of_periods=period_splitting.date_selection(df, start, end, list_of_days, number_of_days)
 # list_of_periods=period_splitting.year_splitting(df,year)
-
 
 
 #-------Simulate performance for selected period
@@ -48,9 +52,10 @@ list_of_periods=period_splitting.date_selection(df, start, end, list_of_days, nu
 
 #-------analysing output data, plotting charts and testing type 1 and type 2 error
 [list_mean,list_std_dev,list_z_type1,list_diff_AUC2]=analyse_data.error_type1_testing(list_diff_AUC)
+[list_prob,list_xs,list_zs]=analyse_data.error_type2_testing(list_diff_AUC,list_mi,z_sup,z_inf,list_std_dev)
+# analyse_data.plot_charts(list_all_results, number_of_experiments)
 
-
-print(sum(i>2.33 for i in list_z_type1)/len(list_z_type1))
-print(sum(i<-2.33 for i in list_z_type1)/len(list_z_type1))
-print((sum(i>2.33 for i in list_z_type1)+sum(i<-2.33 for i in list_z_type1))/len(list_z_type1))
+print(sum(i>z_sup for i in list_z_type1)/len(list_z_type1))
+print(sum(i<z_inf for i in list_z_type1)/len(list_z_type1))
+print((sum(i>z_sup for i in list_z_type1)+sum(i<z_inf for i in list_z_type1))/len(list_z_type1))
 

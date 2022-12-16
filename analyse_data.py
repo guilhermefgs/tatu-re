@@ -67,3 +67,26 @@ def error_type1_testing(list_diff_AUC):
         list_z_type1.append((list_mean[-1]-mi)/(list_std_dev[-1]/(n**0.5)))
         
     return list_mean,list_std_dev,list_z_type1,list_diff_AUC
+
+def error_type2_testing(list_diff_AUC,list_mi,z_sup,z_inf,list_std_dev):
+
+    mi_test=1
+    mi=0
+    list_prob=[]
+    list_xs=[]
+    list_zs=[]
+    n=len(list_diff_AUC)
+    
+    for i in list_std_dev:
+        x_inf=z_inf*i/(n**0.5)+mi
+        x_sup=z_sup*i/(n**0.5)+mi
+        
+        z_inf=(x_inf-mi_test)/(i/(n**0.5))
+        z_sup=(x_sup-mi_test)/(i/(n**0.5))
+        
+        list_xs.append([x_inf,x_sup])
+        list_zs.append([z_inf,z_sup])
+        
+        list_prob.append(1-(sp.norm.cdf(z_inf)+1-sp.norm.cdf(z_sup))) #Beta=1-Power, https://stackoverflow.com/questions/20864847/probability-to-z-score-and-vice-versa
+        
+    return list_prob,list_xs,list_zs
