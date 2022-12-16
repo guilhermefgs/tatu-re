@@ -73,7 +73,7 @@ class Portfolio:
         plt.title("Portfolio Performance Comparison", fontsize=20)
         plt.xlabel("Time (days)", fontsize=16)
         plt.legend(loc="lower left", fontsize=12)
-        plt.ylim(0, 1500)
+        plt.ylim(800, 2000)
         plt.ylabel("Money ($)", fontsize=16)
         plt.grid()
         plt.show()
