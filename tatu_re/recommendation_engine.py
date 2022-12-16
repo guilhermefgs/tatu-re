@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from tatu_re.utils import send_email
 from tatu_re.portfolio import Portfolio
 from tatu_re.model import load_model
-from tatu_re.model.data_processing.indicators import calculate_features
+from tatu_re.model.data_processing import calculate_features
 from typing import Tuple
 from datetime import datetime, timedelta
 
@@ -89,4 +89,11 @@ class TreeBasedEngine(RecommendationEngine):
 
         return action, quantity
         
+class LinearRegressionEngine(RecommendationEngine):
+    """Recommendation Engine based on Linear Regression model
+    """
+    model = load_model("linear_regression_v1.sav")
 
+    def recommendation(self) -> None:
+        # TODO need to write conditions here
+        return super().recommendation()
