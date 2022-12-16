@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # model
-models/
+saved_models/
 results/

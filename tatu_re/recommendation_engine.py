@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from tatu_re.utils import send_email
 from tatu_re.portfolio import Portfolio
 from tatu_re.model import load_model
-from tatu_re.indicators import calculate_features
+from tatu_re.model.data_processing.indicators import calculate_features
 from typing import Tuple
 from datetime import datetime, timedelta
 

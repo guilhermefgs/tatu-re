@@ -1,5 +1,4 @@
-from tatu_re.model import train_model, train_set
+from tatu_re.model import train_model
 
 if __name__ == "__main__":
-    X, y = train_set()
-    model = train_model(X, y, save=True)
+    model = train_model(save=True)
