@@ -7,6 +7,8 @@ from ta.trend import sma_indicator, psar_up, psar_down
 from ta.volume import on_balance_volume, acc_dist_index
 from ta.volatility import average_true_range, bollinger_mavg
 from ta.momentum import rsi, stoch, ultimate_oscillator
+from tatu_re.utils import get_data
+from datetime import timedelta, datetime
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
