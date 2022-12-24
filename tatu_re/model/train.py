@@ -6,7 +6,7 @@ from datetime import datetime
 import pathlib
 import pickle
 
-def train_model(save=False):
+def train_model(save=True):
 
     begin = datetime(2015,3,1)
     end = datetime(2021,3,1)

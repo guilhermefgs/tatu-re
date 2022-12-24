@@ -24,3 +24,6 @@ dependencies = [
     "yfinance",
     "ta"
 ]
+
+[project.scripts]
+    train-model = "tatu_re:train_model"
