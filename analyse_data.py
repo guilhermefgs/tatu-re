@@ -90,3 +90,59 @@ def error_type2_testing(list_diff_AUC,list_mi,z_sup,z_inf,list_std_dev):
         list_prob.append(1-(sp.norm.cdf(z_inf)+1-sp.norm.cdf(z_sup))) #Beta=1-Power, https://stackoverflow.com/questions/20864847/probability-to-z-score-and-vice-versa
         
     return list_prob,list_xs,list_zs
+
+def pooled_test(list_check_total,list_check_benchmark):
+    
+    list_std_dev=[]
+    list_mean=[]    
+    list_check_total=[list(x) for x in zip(*list_check_total)]
+    list_check_benchmark=[list(x) for x in zip(*list_check_benchmark)]
+
+    for i in list_check_total:
+        list_parcial_mean=[]
+        for j in i:
+            list_parcial_mean.append(st.mean(j))
+        list_std_dev.append(st.stdev(list_parcial_mean))
+        list_mean.append(st.mean(list_parcial_mean))
+    
+    return list_std_dev,list_mean
+
+
+def simple_pooled(list_check_total, list_check_benchmark,alfa):
+    
+    list_flat_total=[]
+    list_flat_benchmark=[]
+    
+    for i in list_check_total[0]:
+        for j in i:
+            list_flat_total.append(j)
+    
+    for i in list_check_benchmark[0]:
+        for j in i:
+            list_flat_benchmark.append(j)
+            
+    n1=len(list_flat_total)
+    n2=len(list_flat_benchmark)
+    
+    std1=st.stdev(list_flat_total)
+    std2=st.stdev(list_flat_benchmark)
+    
+    mean1=st.mean(list_flat_total)
+    mean2=st.mean(list_flat_benchmark)
+    
+    spooled=(((n1-1)*std1+(n2-1)*std2)/(n1+n2-2))**(0.5)
+        
+    SE=spooled*((1/n1+1/n2)**0.5)
+    
+    DF=n1+n2-2
+    
+    TAlfaOver2=sp.t.ppf(1-alfa/2,DF)
+    
+    upper=mean1-mean2+TAlfaOver2*SE
+    inferior=mean1-mean2-TAlfaOver2*SE
+    
+    tScore=(mean1-mean2)/SE
+    
+    pValue=2*(1 - sp.t.cdf(abs(tScore), DF)) # making times two because it is a double tailed problem
+    
+    return list_flat_total,list_flat_benchmark,TAlfaOver2,inferior,upper,tScore,pValue

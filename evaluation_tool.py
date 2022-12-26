@@ -16,9 +16,11 @@ ticker="SPY" #SPY for S&P 500, DAX.DE for DAX, ^N225 for Nikkei
 start = datetime(1994,3,1)
 end=datetime.today()
 number_of_days=60
-number_of_experiments=100
+number_of_experiments=10
 year=2018
-list_mi=[-10,-1,1,10]
+
+alfa=0.05 #5% chance of occuring type 1 error
+
 z_inf=-2.33 #
 z_sup=2.33 #
 
@@ -40,22 +42,27 @@ df.to_excel('C:/Users/chris/OneDrive/Documentos/GitHub/tatu-re/'+'df.xlsx')
 
 
 # -------Splitting timeseries into periods for comparison of performance
-list_of_periods=period_splitting.date_selection(df, start, end, list_of_days, number_of_days)
-# list_of_periods=period_splitting.year_splitting(df,year)
+# list_of_periods=period_splitting.date_selection(df, start, end, list_of_days, number_of_days)
+list_of_periods=period_splitting.year_splitting(df,year)
+
 
 
 #-------Simulate performance for selected period
 [list_diff_AUC,list_check_in_asset,
- list_check_in_cash,list_check_benchmark]=perform_simulation.simulation_loop(list_of_periods,number_of_experiments)
+ list_check_in_cash,list_check_benchmark,list_check_total] = perform_simulation.simulation_loop(list_of_periods,number_of_experiments)
 
 
 
 #-------analysing output data, plotting charts and testing type 1 and type 2 error
-[list_mean,list_std_dev,list_z_type1,list_diff_AUC2]=analyse_data.error_type1_testing(list_diff_AUC)
-[list_prob,list_xs,list_zs]=analyse_data.error_type2_testing(list_diff_AUC,list_mi,z_sup,z_inf,list_std_dev)
+[list_mean,list_std_dev,list_z_type1,list_diff_AUC2] = analyse_data.error_type1_testing(list_diff_AUC)
+# [list_prob,list_xs,list_zs] = analyse_data.error_type2_testing(list_diff_AUC,list_mi,z_sup,z_inf,list_std_dev)
 # analyse_data.plot_charts(list_all_results, number_of_experiments)
 
-print(sum(i>z_sup for i in list_z_type1)/len(list_z_type1))
-print(sum(i<z_inf for i in list_z_type1)/len(list_z_type1))
-print((sum(i>z_sup for i in list_z_type1)+sum(i<z_inf for i in list_z_type1))/len(list_z_type1))
 
+# -------Perform pooled test
+# [list_flat_total,list_flat_benchmark,TAlfaOver2,inferior,upper,tScore,pValue]=analyse_data.simple_pooled(list_check_total, list_check_benchmark,alfa)
+
+
+# print(sum(i>z_sup for i in list_z_type1)/len(list_z_type1))
+# print(sum(i<z_inf for i in list_z_type1)/len(list_z_type1))
+# print((sum(i>z_sup for i in list_z_type1)+sum(i<z_inf for i in list_z_type1))/len(list_z_type1))
