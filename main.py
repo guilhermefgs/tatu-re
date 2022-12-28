@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from tatu_re.portfolio import Portfolio, Benchmark
+from tatu_re.portfolio.portfolio import Portfolio, Benchmark
 from tatu_re.recommendation_engine import TreeBasedEngine
 from tatu_re.utils import get_data
 

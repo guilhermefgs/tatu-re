@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
 from tatu_re.utils import send_email
-from tatu_re.portfolio import Portfolio
+from tatu_re.portfolio.portfolio import Portfolio
 from tatu_re.model import load_model
 from tatu_re.model.data_processing import calculate_features
 from typing import Tuple
