@@ -1,2 +1,0 @@
-Nao vai ser um z test, vai ser um t-test, vou ter que salvar as medias e os desvios padrao pra 
-poder fazer a pooled test depois, porque precisa ser proximo (desvio padrao).

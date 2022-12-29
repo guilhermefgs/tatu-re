@@ -7,13 +7,15 @@ Created on Tue Dec 13 09:07:25 2022
 
 import numpy as np
 from tatu_re.portfolio import Portfolio,Benchmark
+from tatu_re.recommendation_engine import MonkeyEvolution
 from tatu_re.recommendation_engine import Monkey
 
 def simulates_portfolio_once(chosen_date,df):
     
     benchmark = Benchmark(initial_capital=1000,start_date=chosen_date,timeseries=df['Close'])
     portfolio = Portfolio(initial_capital=1000,start_date=chosen_date,benchmark=benchmark)
-    manager = Monkey()
+    manager = MonkeyEvolution()
+    # manager = Monkey()
     
     for index, row in df.iterrows():
     
@@ -65,5 +67,6 @@ def simulation_loop(list_of_periods,number_of_experiments):
         list_check_in_cash.append(list_parcial_check_in_cash)
         list_check_benchmark.append(list_parcial_check_benchmark)
         list_check_total.append(list_parcial_total)
+        
     
     return list_diff_AUC,list_check_in_asset,list_check_in_cash,list_check_benchmark,list_check_total

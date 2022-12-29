@@ -24,7 +24,7 @@ def year_splitting(df,year):
     
     return list_of_periods
 
-def date_selection(df,start,end,list_of_days,number_of_days):
+def date_selection(df,list_of_days,number_of_days):
     
     df.index = df.index.tz_localize(None) # removes timezone from index that contains date and time
     df['row number']=np.arange(df.shape[0])
