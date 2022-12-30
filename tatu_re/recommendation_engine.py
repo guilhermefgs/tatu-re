@@ -1,19 +1,18 @@
 import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
-from tatu_re.utils import send_email
+from tatu_re.utils import send_email, get_data
 from tatu_re.portfolio import Portfolio
 from tatu_re.model import load_model
-from tatu_re.model.data_processing import calculate_features
 from typing import Tuple
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 class RecommendationEngine(ABC):
 
     def __init__(self):
         self.clients = pd.DataFrame([
             {"Nome": "Christian", "Email": "christianleomil@gmail.com"},
-            {"Nome": "Gui", "Email": "aateg.german@live.com"}
+            {"Nome": "Gui", "Email": "aateg.german@gmail.com"}
         ])
 
     @abstractmethod
@@ -69,17 +68,20 @@ class Monkey(RecommendationEngine):
         self.send_email(action, quantity)
 
         return action, quantity
-
-class TreeBasedEngine(RecommendationEngine):
-    """Recommendation Engine based on Decision Tree model
-    """
-    model = load_model("decision_tree_v1.sav")
-
-    def recommendation(self, simulation_date: datetime, price: float, portfolio: Portfolio) -> Tuple[str, int]:
-
-        X = calculate_features(simulation_date)
         
-        u = self.model.predict(X.iloc[-1].to_frame().T)[0]
+class LinearRegressionEngine(RecommendationEngine):
+    """Recommendation Engine based on Linear Regression model
+    """
+    model = load_model("linear_regression_v1.sav")
+
+    def recommendation(self, simulation_date, price, portfolio):
+
+        df = get_data(
+            start = simulation_date - timedelta(days=100),
+            end =  simulation_date
+        )
+        
+        u = self.model.predict(df)[-1]
 
         action = "buy" if u > 0.01 else ("sell" if u < -0.01 else "hold")
 
@@ -88,12 +90,3 @@ class TreeBasedEngine(RecommendationEngine):
         self.send_email(action, quantity)
 
         return action, quantity
-        
-class LinearRegressionEngine(RecommendationEngine):
-    """Recommendation Engine based on Linear Regression model
-    """
-    model = load_model("linear_regression_v1.sav")
-
-    def recommendation(self) -> None:
-        # TODO need to write conditions here
-        return super().recommendation()

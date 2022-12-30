@@ -73,11 +73,6 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     
     return pd.DataFrame.from_dict(indicators)
 
-def calculate_features(date: datetime) -> pd.DataFrame:
-
-    df = get_data(start=(date-timedelta(days=100)), end=date)
-    return calculate_indicators(df.iloc[:-1]).fillna(0)
-
 def calculate_target(price, window=10, log=True):
     """Function that calculate target
 
@@ -95,13 +90,9 @@ def calculate_target(price, window=10, log=True):
     return pd.Series(s, name="target").dropna()
 
 class IndicatorsTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        print("\n>>>>>init() called.\n")
 
     def fit(self, X, y = None):
-        print("\n>>>>>>fit() called.\n")
         return self
 
     def transform(self, X, y = None):
-        print("\n>>>>>> transform() called. \n")
         return calculate_indicators(X)

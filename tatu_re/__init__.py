@@ -1,1 +1,1 @@
-from tatu_re.model.train import train_model
+from tatu_re.model import train_model
