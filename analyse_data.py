@@ -56,7 +56,7 @@ def error_type1_testing(list_diff_AUC,alfa):
     
     alfa=alfa/(len(list_diff_AUC)) #bonferoni correction
     
-    z_inf=(-sp.t.ppf(1-alfa/2,DF))
+    z_inf=(-sp.t.ppf(1-alfa/2,DF)) 
     z_sup=sp.t.ppf(1-alfa/2,DF)
     
     print('\n % times above z score: '+'{:.2%}'.format(sum(i>z_sup for i in list_z_type1)/len(list_z_type1)))
@@ -64,6 +64,33 @@ def error_type1_testing(list_diff_AUC,alfa):
     print('\n % times below or above z score: '+'{:.2%}\n'.format((sum(i>z_sup for i in list_z_type1)+sum(i<z_inf for i in list_z_type1))/len(list_z_type1)))
         
     return list_mean,list_std_dev,list_z_type1,list_diff_AUC
+
+def error_type2_testing(list_diff_AUC,list_power,alfa):
+    
+    list_diff_AUC=[list(x) for x in zip(*list_diff_AUC)]
+    mi=0
+    
+    DF=len(list_diff_AUC)*len(list_diff_AUC[0])
+    z_inf=(-sp.t.ppf(1-alfa/2,DF)) 
+    z_sup=sp.t.ppf(1-alfa/2,DF)
+    
+    power=[]
+    
+    for i in list_power:
+        mi_power=i
+        power_partial=[]
+        for j in list_diff_AUC:         
+            x_barra_inf=(z_inf*st.stdev(j)/(len(j)**0.5))+mi
+            x_barra_sup=(z_sup*st.stdev(j)/(len(j)**0.5))+mi
+            
+            pValueInf=sp.t.cdf((x_barra_inf-mi_power)/(st.stdev(j)/(len(j)**0.5)),DF)
+            pValueSup=1-sp.t.cdf((x_barra_sup-mi_power)/(st.stdev(j)/(len(j)**0.5)),DF)
+            
+            power_partial.append(pValueInf+pValueSup)
+        
+        power.append(power_partial)
+        
+    return power
 
 
 def pooled_test(list_check_total, list_check_benchmark,alfa):

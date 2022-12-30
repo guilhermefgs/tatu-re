@@ -17,9 +17,11 @@ start = datetime(1994,3,1)
 end=datetime.today()
 number_of_days=60
 number_of_experiments=10
-year=2002
+year=2019
 
 alfa=0.05 #5% chance of occuring type 1 error
+
+list_power=[1,10,100]
 
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01','1995-05-01','2021-04-05','2022-06-01','1997-05-01'] #SnP
 # list_of_days=['2008-01-17','2012-09-24','2015-09-10','2017-03-20','2018-10-31','2008-01-22','2021-09-07'] #DAX.DE
@@ -55,9 +57,12 @@ analyse_data.plot_charts(list_check_in_cash, list_check_in_asset,list_check_tota
 
 
 
-#-------analysing output data, plotting charts and testing type 1 error
-# [list_mean,list_std_dev,list_z_type1,list_diff_AUC2] = analyse_data.error_type1_testing(list_diff_AUC,alfa)
+#-------Testing type 1 error
+[list_mean,list_std_dev,list_z_type1,list_diff_AUC2] = analyse_data.error_type1_testing(list_diff_AUC,alfa)
 
+
+#-------Testing type 2 error
+power=analyse_data.error_type2_testing(list_diff_AUC,list_power,alfa)
 
 
 #-------Perform pooled test
@@ -66,5 +71,5 @@ analyse_data.plot_charts(list_check_in_cash, list_check_in_asset,list_check_tota
 
 
 #-------Perform unpooled test
-[list_flat_total,list_flat_benchmark,TAlfaOver2,t_inferior,t_upper,tScore,pValue]=analyse_data.unpooled_test(list_check_total, list_check_benchmark,alfa)
+# [list_flat_total,list_flat_benchmark,TAlfaOver2,t_inferior,t_upper,tScore,pValue]=analyse_data.unpooled_test(list_check_total, list_check_benchmark,alfa)
 
