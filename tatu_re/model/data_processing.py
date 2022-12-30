@@ -92,7 +92,7 @@ def calculate_target(price, window=10, log=True):
         s = np.log(price.shift(-window)/price)
     else:
         s = (price.shift(-window) - price) / price
-    return pd.Series(s, name="target")
+    return pd.Series(s, name="target").dropna()
 
 class IndicatorsTransformer(BaseEstimator, TransformerMixin):
     def __init__(self):

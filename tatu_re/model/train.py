@@ -14,9 +14,14 @@ def train_model(save=True):
 
     target = calculate_target(df["Close"])
 
+    df = df.merge(target, how="right", left_index=True, right_index=True)
+
+    y = df["target"]
+    X = df.drop(["target"], axis=1)
+
     model = linear_regression_pipeline()
 
-    model.fit(df, target)
+    model.fit(X, y)
 
     if save:
         filename = 'linear_regression_v1.sav'
