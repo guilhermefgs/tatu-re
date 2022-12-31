@@ -36,7 +36,7 @@ class Monkey(RecommendationEngine):
         :return: quantity of stocks to buy or sell, zero means "do nothing" or "hold"
         """
         u = np.random.uniform(-1, 1.0)
-        action = "buy" if u > 0.3 else ("sell" if u < -0.3 else "hold")
+        action = "buy" if u > 1/3 else ("sell" if u < -1/3 else "hold")
 
         if action == "buy":
             max_quantity_to_buy = portfolio.in_cash // price
@@ -75,7 +75,7 @@ class MonkeyEvolution(RecommendationEngine):
         :return: quantity of stocks to buy or sell, zero means "do nothing" or "hold"
         """
         u = np.random.uniform(-1, 1.0)
-        action = "buy" if u > 0.3 else ("sell" if u < -0.3 else "hold")
+        action = "buy" if u > 1/3 else ("sell" if u < -1/3 else "hold")
 
         if action == "buy":
             max_quantity_to_buy = (portfolio.in_cash*rd.uniform(0,1))//price

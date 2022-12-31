@@ -15,13 +15,14 @@ import analyse_data
 ticker="SPY" #SPY for S&P 500, DAX.DE for DAX, ^N225 for Nikkei
 start = datetime(1994,3,1)
 end=datetime.today()
-number_of_days=60
+number_of_days=20
 number_of_experiments=10
-year=2019
+year=2018
 
 alfa=0.05 #5% chance of occuring type 1 error
+beta=0.10 # 10% chance of making type 2 error
 
-list_power=[1,10,100]
+list_power=[1,5,10]
 
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01','1995-05-01','2021-04-05','2022-06-01','1997-05-01'] #SnP
 # list_of_days=['2008-01-17','2012-09-24','2015-09-10','2017-03-20','2018-10-31','2008-01-22','2021-09-07'] #DAX.DE
@@ -29,7 +30,7 @@ list_power=[1,10,100]
 # list_of_days=['2020-01-10','1998-10-02','2002-08-01']
 # list_of_days=['2015-03-16','2020-01-22','2008-01-09','2011-04-05'] # low levels for DAX
 # list_of_days=['2000-08-30','2008-04-18','2020-02-21','2021-11-11'] # low levels for SnP
-list_of_days=['2020-12-04','2009-04-20','2017-05-17','2004-07-09'] # high levels for SnP
+# list_of_days=['2020-12-04','2009-04-20','2017-05-17','2004-07-09'] # high levels for SnP
 
 
 
@@ -53,16 +54,18 @@ list_of_periods=period_splitting.year_splitting(df,year)
 
 
 #-------Plot charts of selected Strategy
-analyse_data.plot_charts(list_check_in_cash, list_check_in_asset,list_check_total,list_check_benchmark)
+# analyse_data.plot_charts(list_check_in_cash, list_check_in_asset,list_check_total,list_check_benchmark)
 
 
 
 #-------Testing type 1 error
-[list_mean,list_std_dev,list_z_type1,list_diff_AUC2] = analyse_data.error_type1_testing(list_diff_AUC,alfa)
+# [list_mean,list_std_dev,list_t_type1,list_diff_AUC2] = analyse_data.error_type1_testing(list_diff_AUC,alfa)
+
 
 
 #-------Testing type 2 error
-power=analyse_data.error_type2_testing(list_diff_AUC,list_power,alfa)
+power=analyse_data.error_type2_testing(list_diff_AUC,list_power,alfa,beta)
+
 
 
 #-------Perform pooled test
