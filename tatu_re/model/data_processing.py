@@ -1,3 +1,8 @@
+import numpy as np
+import pandas as pd
+
+from datetime import timedelta, datetime
+
 from ta.trend import sma_indicator, psar_up, psar_down
 from ta.volume import on_balance_volume, acc_dist_index
 from ta.volatility import average_true_range, bollinger_mavg
@@ -5,7 +10,9 @@ from ta.momentum import rsi, stoch, ultimate_oscillator
 from tatu_re.utils import get_data
 from datetime import timedelta, datetime
 
-import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+
+from tatu_re.utils import get_data
 
 def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """Function to calculate indicators
@@ -66,7 +73,26 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     
     return pd.DataFrame.from_dict(indicators)
 
-def calculate_features(date: datetime) -> pd.DataFrame:
+def calculate_target(price, window=10, log=True):
+    """Function that calculate target
 
-    df = get_data(start=(date-timedelta(days=100)), end=date)
-    return calculate_indicators(df.iloc[:-1]).fillna(0)
+    (price_ahead - price)/price
+
+    price [window] days ahead minus price today
+
+    :param price:
+    :param log: return logaritmic difference
+    """
+    if log:
+        s = np.log(price.shift(-window)/price)
+    else:
+        s = (price.shift(-window) - price) / price
+    return pd.Series(s, name="target").dropna()
+
+class IndicatorsTransformer(BaseEstimator, TransformerMixin):
+
+    def fit(self, X, y = None):
+        return self
+
+    def transform(self, X, y = None):
+        return calculate_indicators(X)
