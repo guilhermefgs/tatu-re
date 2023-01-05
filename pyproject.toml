@@ -22,7 +22,8 @@ dependencies = [
     "matplotlib",
     "scikit-learn",
     "yfinance",
-    "ta"
+    "ta",
+    "streamlit"
 ]
 
 [project.scripts]

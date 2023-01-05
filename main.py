@@ -1,4 +1,4 @@
-
+import pandas as pd
 from datetime import datetime
 from tatu_re.portfolio import Portfolio, Benchmark
 from tatu_re.recommendation_engine import LinearRegressionEngine
@@ -35,3 +35,4 @@ for index, row in df.iterrows():
 
 #------------- Plot results
 portfolio.plot()
+portfolio.benchmark.get_timeseries().to_csv("timeseries.csv")
