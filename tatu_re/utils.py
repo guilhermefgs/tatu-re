@@ -5,11 +5,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-def get_data(start, end):
+def get_data(start, end, ticker="SPY"):
     """
     dateStart, dateStop: date start and end in string YYYY-MM-DD or datetime format
     """
-    spyticker = yf.Ticker("SPY")
+    spyticker = yf.Ticker(ticker)
     return spyticker.history(period="max", interval="1d", 
                                    start=start, end=end, 
                                    auto_adjust=True, rounding=True)
