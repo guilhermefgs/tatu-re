@@ -34,14 +34,14 @@ st.markdown("""
 """)
 
 ## Load Data 
-start = datetime(2022,10,11)
-end = datetime(2022,12,15) # TODO make sure to query the same interval of S&P as the data in the csv file
-benchmark = get_data(start, end)["Close"].rename("S&P")
-
 performance = pd.read_csv("timeseries.csv", index_col="Date")["Close"]
 performance = performance.rename("Portfolio")
 performance.index = pd.to_datetime(performance.index)
 
+start   = performance.index[0]
+end     = performance.index[-1] 
+
+benchmark = get_data(start, end)["Close"].rename("S&P")
 
 # Update absolute metrics value
 p_value.metric("Portfolio Value", "$ {:.2f} ".format(performance.iloc[-1]), delta="$ {:.2f} ".format(performance.iloc[-1] - performance.iloc[0]))
@@ -58,4 +58,4 @@ df = pd.concat([benchmark, performance], axis=1, sort=True)
 
 fig = st.line_chart(df)
 
-# TODO add portfolio composition chart
+# TODO add portfolio composition 
