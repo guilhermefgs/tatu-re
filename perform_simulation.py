@@ -12,8 +12,8 @@ from tatu_re.recommendation_engine import Monkey
 
 def simulates_portfolio_once(chosen_date,df):
     
-    benchmark = Benchmark(initial_capital=1000,start_date=chosen_date,timeseries=df['Close'])
-    portfolio = Portfolio(initial_capital=1000,start_date=chosen_date,benchmark=benchmark)
+    benchmark = Benchmark(initial_capital=100000,start_date=chosen_date,timeseries=df['Close'])
+    portfolio = Portfolio(initial_capital=100000,start_date=chosen_date,benchmark=benchmark)
     manager = MonkeyEvolution()
     # manager = Monkey()
     
