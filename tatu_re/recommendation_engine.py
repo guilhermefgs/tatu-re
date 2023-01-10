@@ -97,7 +97,7 @@ class HMMEngine(RecommendationEngine):
     """
     import pickle
     model = 0
-    with open("g_hmm_v1.pkl", "rb") as file:
+    with open(".model/saved_models/g_hmm_v1.pkl", "rb") as file:
         model = pickle.load(file)
 
     def recommendation(self, simulation_date, price, portfolio):
