@@ -22,8 +22,10 @@ dependencies = [
     "matplotlib",
     "scikit-learn",
     "yfinance",
-    "ta"
+    "ta",
+    "scipy"
 ]
 
 [project.scripts]
     train-model = "tatu_re:train_model"
+    evaluate-model = "tatu_re:evaluate_total"
