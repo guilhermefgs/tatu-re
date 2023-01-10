@@ -5,8 +5,8 @@ from tatu_re.recommendation_engine import LinearRegressionEngine
 from tatu_re.utils import get_data
 
 #------------- S&P Data - Simulation Date
-start = datetime(2022,10,11)
-end = datetime(2022,12,15)
+start = datetime(2022,7,11)
+end = datetime(2022,12,10)
 df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
@@ -20,7 +20,7 @@ for index, row in df.iterrows():
 
     label, quantity = manager.recommendation(
         simulation_date=index, 
-        price=row["Open"], 
+        price=row["Close"], 
         portfolio=portfolio
     )
 
@@ -28,7 +28,7 @@ for index, row in df.iterrows():
 
     portfolio.update(
         date=index,
-        price=row["Open"],
+        price=row["Close"],
         quantity=quantity,
         action=label
     )
