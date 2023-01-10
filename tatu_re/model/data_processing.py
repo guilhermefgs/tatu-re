@@ -51,9 +51,9 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     indicators = {
 
         # Trend indicators
-        "SMA20": sma_indicator(close, window=20)/close,
-        "SMA50": sma_indicator(close, window=20)/close,
-        "PSAR_UP": psar_up(high, low, close)/close,
+        "SMA20": sma_indicator(close, window=20),
+        "SMA50": sma_indicator(close, window=50),
+        "PSAR_UP": psar_up(high, low, close),
         #"PSAR_DOWN": psar_down(high, low, close),
         
         # Volume indicators
@@ -73,7 +73,7 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     
     return pd.DataFrame.from_dict(indicators)
 
-def calculate_target(price, window=10, log=True):
+def calculate_target(price, window=1, log=True):
     """Function that calculate target
 
     (price_ahead - price)/price

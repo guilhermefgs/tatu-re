@@ -75,11 +75,12 @@ class LinearRegressionEngine(RecommendationEngine):
     """
     model = load_model("linear_regression_v1.sav")
 
-    def recommendation(self, simulation_date, price, portfolio):
+    def recommendation(self, simulation_date, price, portfolio, ticker):
 
         df = get_data(
             start = simulation_date - timedelta(days=100),
-            end =  simulation_date
+            end =  simulation_date,
+            ticker = ticker
         )
         
         u = self.model.predict(df)[-1]

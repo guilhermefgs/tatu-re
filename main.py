@@ -10,7 +10,7 @@ end = datetime(2021,6,15)
 df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
-benchmark = Benchmark(initial_capital=1400, start_date=start, timeseries=df["Close"])
+benchmark = Benchmark(initial_capital=1400, start_date=start, timeseries=df["Open"])
 portfolio = Portfolio(initial_capital=1400, start_date=start, benchmark=benchmark)
 manager = HMMEngine() # manager sends the email
 
@@ -20,7 +20,7 @@ for index, row in df.iterrows():
 
     label, quantity = manager.recommendation(
         simulation_date=index, 
-        price=row["Open"], 
+        price=row["Close"], 
         portfolio=portfolio
     )
 
@@ -28,7 +28,7 @@ for index, row in df.iterrows():
 
     portfolio.update(
         date=index,
-        price=row["Open"],
+        price=row["Close"],
         quantity=quantity,
         action=label
     )
