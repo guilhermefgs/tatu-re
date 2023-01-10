@@ -10,7 +10,7 @@ end = datetime(2022,12,15)
 df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
-benchmark = Benchmark(initial_capital=1400, start_date=start, timeseries=df["Close"])
+benchmark = Benchmark(initial_capital=1400, start_date=start, timeseries=df["Open"])
 portfolio = Portfolio(initial_capital=1400, start_date=start, benchmark=benchmark)
 manager = LinearRegressionEngine() # manager sends the email
 
