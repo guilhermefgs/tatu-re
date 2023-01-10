@@ -1,29 +1,40 @@
+import pandas as pd
 import numpy as np
 import statistics as st
 import scipy.stats as sp
+import pathlib
 
 from tatu_re.utils import get_data
 from tatu_re.evaluation.utils import year_splitting
 from tatu_re.portfolio import Portfolio, Benchmark
 from tatu_re.recommendation_engine import LinearRegressionEngine
 
-from datetime import timedelta, datetime
+from datetime import datetime
 
 def evaluate_total():
+
+    ticker="DAX.DE"
+
     # get todays years with datetime
     year = 2022
-    years = np.arange(year-10, year + 1)
+    years = np.arange(year, year + 1)
 
     # evaluate each year
-    pvalue_list = []
-    conf_interval_list = []
+    evaluation = []
     for year in years:
-        pvalue, conf_interval = evaluate_one_year(year, ticker="DAX.DE")
+        pvalue, conf_interval = evaluate_one_year(year, ticker)
+        evaluation.append(
+            {
+                "year": year,
+                "ticker": ticker,
+                "pValue": pvalue,
+                "beginConfidenceInterval": conf_interval[0],
+                "endConfidenceInterval": conf_interval[1],
+            }
+        )
         print(f"\n\nYear: {year} | p-value: {pvalue} | Confidence Interval: {conf_interval}")
-        pvalue_list.append(pvalue)
-        conf_interval_list.append(conf_interval)
 
-    return pvalue_list, conf_interval_list
+    pd.DataFrame(evaluation).to_csv(pathlib.Path(__file__).parent / "results/evaluation_linear_regression_v1.csv", index=False)
 
 def evaluate_one_year(year, ticker="DAX.DE"):
 
@@ -40,7 +51,7 @@ def evaluate_one_year(year, ticker="DAX.DE"):
     benchmark_results = []
     alfa = 0.05
 
-    for df_week in df_splitted_in_weeks:
+    for i, df_week in enumerate(df_splitted_in_weeks):
 
         in_asset_series, in_cash_series, benchmark = simulate_portfolio(df_week, ticker)
         total = np.add(in_cash_series,in_asset_series)
@@ -76,7 +87,7 @@ def evaluate_one_year(year, ticker="DAX.DE"):
 def simulate_portfolio(df, ticker="DAX.DE"):
 
     begin_date = df.index[0]
-    initial_capital = 1000
+    initial_capital = 10000
 
     benchmark = Benchmark(initial_capital=initial_capital, start_date=begin_date, timeseries=df['Close'])
     portfolio = Portfolio(initial_capital=initial_capital, start_date=begin_date, benchmark=benchmark)
