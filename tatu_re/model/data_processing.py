@@ -51,9 +51,9 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     indicators = {
 
         # Trend indicators
-        "SMA20": sma_indicator(close, window=20),
-        "SMA50": sma_indicator(close, window=20),
-        "PSAR_UP": psar_up(high, low, close),
+        "SMA20": sma_indicator(close, window=20)/close,
+        "SMA50": sma_indicator(close, window=20)/close,
+        "PSAR_UP": psar_up(high, low, close)/close,
         #"PSAR_DOWN": psar_down(high, low, close),
         
         # Volume indicators
@@ -62,7 +62,7 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
         # Volatility indicators
         "ATR": average_true_range(high, low, close),
-        "BBANDS ": bollinger_mavg(close),
+        "BBANDS ": bollinger_mavg(close)/close,
         
         # Momentum indicators
         "RSI": rsi(close),

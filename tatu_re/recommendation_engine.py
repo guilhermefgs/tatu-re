@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
 from tatu_re.utils import send_email, get_data
+from tatu_re.model.data_processing import calculate_indicators
 from tatu_re.portfolio import Portfolio
 from tatu_re.model import load_model
 from typing import Tuple
@@ -85,6 +86,39 @@ class LinearRegressionEngine(RecommendationEngine):
 
         action = "buy" if u > 0.01 else ("sell" if u < -0.01 else "hold")
 
+        action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio)
+
+        self.send_email(action, quantity)
+
+        return action, quantity
+
+class HMMEngine(RecommendationEngine):
+    """Recommendation Engine based on HMM model
+    """
+    import pickle
+    model = 0
+    with open("g_hmm_v1.pkl", "rb") as file:
+        model = pickle.load(file)
+
+    def recommendation(self, simulation_date, price, portfolio):
+
+        df = get_data(
+            start = simulation_date - timedelta(days=100),
+            end =  simulation_date
+        )
+        
+        df = calculate_indicators(df)
+        df.dropna(inplace=True)
+
+        u = self.model.predict(df)[-1]
+        print(u)
+        if u == 0 or u == 3:
+            action = "buy"
+        elif u == 4 :
+            action = "sell"
+        else:
+            action = "hold"
+        
         action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio)
 
         self.send_email(action, quantity)
