@@ -16,3 +16,10 @@ def load_model(filename):
     if path.exists():
         return pickle.load(open(path, 'rb'))
     raise FileExistsError(f" File: {filename} doesn't exist in tatu_re/models")
+
+def save_model(filename, model):
+    path = pathlib.Path(__file__).parent / "saved_models/"
+    if not path.exists(): 
+        path.mkdir()
+    path_to_save = path / filename
+    pickle.dump(model, open(path_to_save, 'wb'))
