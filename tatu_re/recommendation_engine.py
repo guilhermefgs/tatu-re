@@ -98,10 +98,10 @@ class HMMEngine(RecommendationEngine):
     """
     import pickle
     model = 0
-    with open(".model/saved_models/g_hmm_v1.pkl", "rb") as file:
+    with open("./tatu_re/model/saved_models/g_hmm_v1.pkl", "rb") as file:
         model = pickle.load(file)
 
-    def recommendation(self, simulation_date, price, portfolio):
+    def recommendation(self, simulation_date, price, portfolio, ticker=None):
 
         df = get_data(
             start = simulation_date - timedelta(days=100),

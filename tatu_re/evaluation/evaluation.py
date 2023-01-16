@@ -7,7 +7,7 @@ import pathlib
 from tatu_re.utils import get_data
 from tatu_re.evaluation.utils import year_splitting
 from tatu_re.portfolio import Portfolio, Benchmark
-from tatu_re.recommendation_engine import LinearRegressionEngine
+from tatu_re.recommendation_engine import LinearRegressionEngine, HMMEngine
 
 from datetime import datetime
 
@@ -16,8 +16,8 @@ def evaluate_total():
     ticker="DAX.DE"
 
     # get todays years with datetime
-    year = 2022
-    years = np.arange(year, year + 1)
+    year = 2013
+    years = np.arange(year, year + 10)
 
     # evaluate each year
     evaluation = []
@@ -34,7 +34,7 @@ def evaluate_total():
         )
         print(f"\n\nYear: {year} | p-value: {pvalue} | Confidence Interval: {conf_interval}")
 
-    pd.DataFrame(evaluation).to_csv(pathlib.Path(__file__).parent / "results/evaluation_linear_regression_v1.csv", index=False)
+    pd.DataFrame(evaluation).to_csv(pathlib.Path(__file__).parent / "results/g_hmm_v1.csv", index=False)
 
 def evaluate_one_year(year, ticker="DAX.DE"):
 
@@ -52,7 +52,6 @@ def evaluate_one_year(year, ticker="DAX.DE"):
     alfa = 0.05
 
     for i, df_week in enumerate(df_splitted_in_weeks):
-
         in_asset_series, in_cash_series, benchmark = simulate_portfolio(df_week, ticker)
         total = np.add(in_cash_series,in_asset_series)
 
@@ -91,7 +90,7 @@ def simulate_portfolio(df, ticker="DAX.DE"):
 
     benchmark = Benchmark(initial_capital=initial_capital, start_date=begin_date, timeseries=df['Close'])
     portfolio = Portfolio(initial_capital=initial_capital, start_date=begin_date, benchmark=benchmark)
-    manager = LinearRegressionEngine()
+    manager = HMMEngine()
     
     for index, row in df.iterrows():
     
