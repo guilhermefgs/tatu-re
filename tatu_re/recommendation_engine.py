@@ -112,7 +112,7 @@ class HMMEngine(RecommendationEngine):
         df.dropna(inplace=True)
 
         u = self.model.predict(df)[-1]
-        print(u)
+
         if u == 0 or u == 3:
             action = "buy"
         elif u == 4 :
