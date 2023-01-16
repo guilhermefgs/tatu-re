@@ -23,9 +23,11 @@ dependencies = [
     "scikit-learn",
     "yfinance",
     "ta",
-    "scipy"
+    "scipy",
+    "hmmlearn",
 ]
 
 [project.scripts]
     train-model = "tatu_re:train_model"
     evaluate-model = "tatu_re:evaluate_total"
+    train-hmm = "tatu_re:train_hidden_markov_model"
