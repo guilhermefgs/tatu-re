@@ -91,3 +91,23 @@ class LinearRegressionEngine(RecommendationEngine):
         self.send_email(action, quantity)
 
         return action, quantity
+
+
+class HiddenMarkovEngine(RecommendationEngine):
+    """Recommendation Engine based on Hidden Markov Model
+    """
+    model = load_model("hmm_v1.sav")
+
+    def recommendation(self, simulation_date, price, portfolio, ticker):
+
+        u = self.model.predict(simulation_date, ticker)
+
+        action = "buy" if u > 0 else "sell"
+
+        _action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio)
+
+        self.send_email(action, quantity)
+
+        print(f"Action={action}, Decision={_action} | quantity={quantity}\n\n")
+
+        return _action, quantity
