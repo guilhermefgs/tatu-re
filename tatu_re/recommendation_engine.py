@@ -109,7 +109,7 @@ class HMMEngine(RecommendationEngine):
         )
         
         df = calculate_indicators(df)
-        df.dropna(inplace=True)
+        df.fillna(value=df.mean(), inplace=True)
 
         u = self.model.predict(df)[-1]
 
