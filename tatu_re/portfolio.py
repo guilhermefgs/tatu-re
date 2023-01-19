@@ -84,8 +84,6 @@ class Portfolio:
     def plot_compare_timeseries(self, timeindex, ts):
         """Function that plots S&P value versus predictions in time
         """
-        print(ts)
-        print(self.benchmark.timeseries.values)
         plt.figure(2, (16,8))
         plt.plot(timeindex, ts, "-b", label="Prediction")
         plt.plot(timeindex, self.benchmark.timeseries.values, "-r", label="S&P500")
