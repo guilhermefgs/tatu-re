@@ -77,7 +77,7 @@ class HMMStockPredictor:
             predict_data = predict_data.iloc[:-1]
         predicted_frac_change, pred_frac_high, pred_frac_low = self._get_most_probable_outcome(predict_data)
 
-        self.timeseries.append(predict_data.iloc[-1]["Close"]*(1+predicted_frac_change))
+        self.timeseries.append(predict_data.iloc[-1]["Open"]*(1+predicted_frac_change))
 
         return predicted_frac_change
 
