@@ -46,11 +46,13 @@ class Portfolio:
         self.in_cash_series.append(self.in_cash)
         self.in_asset_series.append(self.in_asset)
 
-    def plot(self) -> None:
+    def plot(self, predicted_ts = None) -> None:
         benchmark = self.benchmark.get_timeseries()
         total = np.add(self.in_cash_series, self.in_asset_series)
         self.plot_compare_benchmark(benchmark.index, total)
         self.plot_cash_vs_asset(benchmark.index)
+        if predicted_ts != None:
+            self.plot_compare_timeseries(benchmark.index, predicted_ts)
 
     def plot_cash_vs_asset(self, timeindex) -> None:
         plt.figure(2, (16,8))
@@ -74,6 +76,22 @@ class Portfolio:
         plt.xlabel("Time (days)", fontsize=16)
         plt.legend(loc="lower left", fontsize=12)
         plt.ylim(800, 2000)
+        plt.ylabel("Money ($)", fontsize=16)
+        plt.grid()
+        plt.show()
+
+    
+    def plot_compare_timeseries(self, timeindex, ts):
+        """Function that plots S&P value versus predictions in time
+        """
+        print(ts)
+        print(self.benchmark.timeseries.values)
+        plt.figure(2, (16,8))
+        plt.plot(timeindex, ts, "-b", label="Prediction")
+        plt.plot(timeindex, self.benchmark.timeseries.values, "-r", label="S&P500")
+        plt.title("Prediction Comparison", fontsize=20)
+        plt.xlabel("Time (days)", fontsize=16)
+        plt.legend(loc="lower left", fontsize=12)
         plt.ylabel("Money ($)", fontsize=16)
         plt.grid()
         plt.show()

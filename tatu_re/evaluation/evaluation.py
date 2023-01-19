@@ -13,7 +13,7 @@ from datetime import datetime
 
 def evaluate_total():
 
-    ticker="DAX.DE"
+    ticker="SPY"
 
     # get todays years with datetime
     year = 2022

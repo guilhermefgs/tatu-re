@@ -5,7 +5,7 @@ from tatu_re.recommendation_engine import HiddenMarkovEngine
 from tatu_re.utils import get_data
 
 #------------- S&P Data - Simulation Date
-start, end = datetime(2022,11,1), datetime(2022,12,31)
+start, end = datetime(2022,11,1), datetime(2022,12,30)
 df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
@@ -30,6 +30,6 @@ for index, row in df.iterrows():
         quantity=quantity,
         action=label
     )
-
+predicted_ts = manager.model.save_predicted_timeseries()
 #------------- Plot results
-portfolio.plot()
+portfolio.plot(predicted_ts = predicted_ts)

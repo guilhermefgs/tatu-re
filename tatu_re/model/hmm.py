@@ -15,14 +15,19 @@ class HMMStockPredictor:
     def __init__(
         self,
         train_data,
-        n_hidden_states=4,
+        n_hidden_states=5,
         n_latency_days=10,
     ):
         self._init_logger()
         self.n_latency_days = n_latency_days
         self.hmm = GaussianHMM(n_components=n_hidden_states)
         self.train_data = train_data
+        self.timeseries = []
 
+
+    def save_predicted_timeseries(self):
+        # self.timeseries.to_csv("predicted_timeseries.csv")
+        return self.timeseries
 
     def _init_logger(self):
         self._logger = logging.getLogger(__name__)
@@ -70,8 +75,9 @@ class HMMStockPredictor:
         # avoiding problem with simulation
         if prediction_day in predict_data.index:
             predict_data = predict_data.iloc[:-1]
-
         predicted_frac_change, pred_frac_high, pred_frac_low = self._get_most_probable_outcome(predict_data)
+
+        self.timeseries.append(predict_data.iloc[-1]["Close"]*(1+predicted_frac_change))
 
         return predicted_frac_change
 

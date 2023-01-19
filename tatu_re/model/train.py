@@ -9,7 +9,7 @@ import pathlib
 import pickle
 
 def train_data():
-    begin = datetime(1990,3,1)
+    begin = datetime(1980,3,1)
     end = datetime(2021,3,1)
     df = get_data(begin, end, "SPY")
     return df
