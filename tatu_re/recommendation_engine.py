@@ -100,14 +100,41 @@ class HiddenMarkovEngine(RecommendationEngine):
 
     def recommendation(self, simulation_date, price, portfolio, ticker):
 
-        u = self.model.predict(simulation_date, ticker)
+        u, score = self.model.predict(simulation_date, ticker)
 
         action = "buy" if u > 0 else "sell"
 
-        _action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio)
+        _action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio, score)
 
         self.send_email(action, quantity)
 
         print(f"Action={action}, Decision={_action} | quantity={quantity}\n\n")
 
         return _action, quantity
+
+    def criteria_for_quantity_of_investment(self, action: str, price: float, portfolio: Portfolio, score: float):
+        # assert score > 0
+
+        if score > 5:
+            certainty = min(score/20, 1)
+            print(certainty)
+            if action == "buy":
+                max_quantity_to_buy = portfolio.in_cash*certainty // price
+                if max_quantity_to_buy == 0:
+                    action, quantity = "hold", 0 # don't have enough money to execute order
+                else:
+                    action, quantity = "buy", max_quantity_to_buy
+
+            elif action == "sell":
+                max_quantity_to_sell = portfolio.n_stocks // (1/certainty)
+                if max_quantity_to_sell == 0:
+                    action, quantity = "hold", 0  # don't have any stock to share
+                else:
+                    action, quantity = "sell", max_quantity_to_sell
+
+            else:
+                action, quantity = "hold", 0  # should do nothing
+        else:
+            action, quantity = "hold", 0  # should do nothing
+        
+        return action, quantity 

@@ -5,12 +5,12 @@ from tatu_re.recommendation_engine import HiddenMarkovEngine
 from tatu_re.utils import get_data
 
 #------------- S&P Data - Simulation Date
-start, end = datetime(2022,11,1), datetime(2022,12,30)
+start, end = datetime(2022,3,1), datetime(2022,3,28)
 df = get_data(start, end)
 
 #------------- Create Portfolio, Benchmark and Manager
-benchmark = Benchmark(initial_capital=1400, start_date=start, timeseries=df["Open"])
-portfolio = Portfolio(initial_capital=1400, start_date=start, benchmark=benchmark)
+benchmark = Benchmark(initial_capital=14000, start_date=start, timeseries=df["Open"])
+portfolio = Portfolio(initial_capital=14000, start_date=start, benchmark=benchmark)
 manager = HiddenMarkovEngine() # manager sends the email
 
 #------------- Simulation
@@ -19,14 +19,14 @@ for index, row in df.iterrows():
 
     label, quantity = manager.recommendation(
         simulation_date=index, 
-        price=row["Close"], 
+        price=row["Open"], 
         portfolio=portfolio,
         ticker="SPY"
     )
 
     portfolio.update(
         date=index,
-        price=row["Close"],
+        price=row["Open"],
         quantity=quantity,
         action=label
     )

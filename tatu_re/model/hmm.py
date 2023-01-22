@@ -15,7 +15,7 @@ class HMMStockPredictor:
     def __init__(
         self,
         train_data,
-        n_hidden_states=5,
+        n_hidden_states=10,
         n_latency_days=10,
     ):
         self._init_logger()
@@ -75,11 +75,11 @@ class HMMStockPredictor:
         # avoiding problem with simulation
         if prediction_day in predict_data.index:
             predict_data = predict_data.iloc[:-1]
-        predicted_frac_change, pred_frac_high, pred_frac_low = self._get_most_probable_outcome(predict_data)
+        predicted_frac_change, score = self._get_most_probable_outcome(predict_data)
 
         self.timeseries.append(predict_data.iloc[-1]["Open"]*(1+predicted_frac_change))
 
-        return predicted_frac_change
+        return predicted_frac_change, score
 
 
     def _get_most_probable_outcome(self, predict_data):
@@ -99,10 +99,11 @@ class HMMStockPredictor:
             total_data = np.row_stack((features, possible_outcome))
             outcome_score.append(self.hmm.score(total_data))
 
+        print(np.max(outcome_score))
         # Get the index of the most probable outcome and return it
         most_probable_outcome = possible_outcomes[np.argmax(outcome_score)]
 
-        return most_probable_outcome
+        return most_probable_outcome[0], np.max(outcome_score)
 
 
     def _compute_all_possible_outcomes(

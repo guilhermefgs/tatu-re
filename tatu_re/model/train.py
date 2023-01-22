@@ -7,11 +7,15 @@ from tatu_re.utils import get_data
 from datetime import datetime
 import pathlib
 import pickle
+import pandas as pd
 
 def train_data():
-    begin = datetime(1980,3,1)
+    begin = datetime(1990,12,1)
     end = datetime(2021,3,1)
-    df = get_data(begin, end, "SPY")
+    df = pd.concat([get_data(begin, end, "SPY"),
+                    get_data(begin, end, "DAX.DE"),
+                    get_data(begin, end, "^BVSP")
+                    ])          
     return df
 
 def train_model(save=True):
