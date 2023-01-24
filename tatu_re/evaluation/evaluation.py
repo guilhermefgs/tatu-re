@@ -3,40 +3,49 @@ import numpy as np
 import statistics as st
 import scipy.stats as sp
 import pathlib
+import matplotlib.pyplot as plt
 
 from tatu_re.utils import get_data
 from tatu_re.evaluation.utils import year_splitting
 from tatu_re.portfolio import Portfolio, Benchmark
 from tatu_re.recommendation_engine import LinearRegressionEngine
+from tatu_re.recommendation_engine import HiddenMarkovEngine
 
 from datetime import datetime
 
 def evaluate_total():
 
-    ticker="DAX.DE"
+    ticker="^N225"
 
     # get todays years with datetime
-    year = 2022
-    years = np.arange(year, year + 1)
+    year = 2013
+    years = np.arange(year, year+10)
 
     # evaluate each year
     evaluation = []
     for year in years:
-        pvalue, conf_interval = evaluate_one_year(year, ticker)
+        pValue_Welch, conf_interval, means, variances, pValue_Levene, pValue_Wilcoxon = evaluate_one_year(year, ticker)
         evaluation.append(
             {
                 "year": year,
                 "ticker": ticker,
-                "pValue": pvalue,
+                "pValue Welch": pValue_Welch,
                 "beginConfidenceInterval": conf_interval[0],
                 "endConfidenceInterval": conf_interval[1],
+                'mean model result': means[0],
+                'mean benchamrk result':means[1],
+                'variance model result': variances[0],
+                'variance benchmark result': variances[1],
+                'pValue Levene': pValue_Levene,
+                'pValue Wilcoxon': pValue_Wilcoxon,
             }
         )
-        print(f"\n\nYear: {year} | p-value: {pvalue} | Confidence Interval: {conf_interval}")
+        print(f"\n\nYear: {year} | p-value Welch: {pValue_Welch} | Confidence Interval: {conf_interval}")
+        print(f"\n\nYear: {year} | p-value Wilcoxon: {pValue_Wilcoxon} ")
 
     pd.DataFrame(evaluation).to_csv(pathlib.Path(__file__).parent / "results/evaluation_linear_regression_v1.csv", index=False)
 
-def evaluate_one_year(year, ticker="DAX.DE"):
+def evaluate_one_year(year, ticker="^N225"):
 
     #-------Getting Data from S&P 500
     begin = datetime(year,1,1)
@@ -59,7 +68,13 @@ def evaluate_one_year(year, ticker="DAX.DE"):
         model_results.extend(total)
         benchmark_results.extend(benchmark)
 
-    #-------Calculate metrics
+    #-------General Data
+    means=[np.mean(model_results),np.mean(benchmark_results)]
+    standard_dev=[np.std(model_results),np.std(benchmark_results)]
+    print(standard_dev)
+    variances=[x**2 for x in standard_dev]
+
+    #-------Welch unpooled test
     mean1 = st.fmean(model_results)
     mean2 = st.fmean(benchmark_results)
 
@@ -79,19 +94,47 @@ def evaluate_one_year(year, ticker="DAX.DE"):
     mean_inferior=mean1-mean2-TAlfaOver2*SE
 
     tScore=(mean1-mean2)/SE
-    pValue=2*(1 - sp.t.cdf(abs(tScore), DF))
+    pValue_Welch=2*(1 - sp.t.cdf(abs(tScore), DF))
 
     conf_interval = (mean_inferior, mean_upper)
-    return pValue, conf_interval
+    #-------Levene test
 
-def simulate_portfolio(df, ticker="DAX.DE"):
+    stats_Levene,pValue_Levene=sp.levene(model_results,benchmark_results,center='median')
+
+    #-------Wilcoxon test
+    stats_Wilcoxon,pValue_Wilcoxon=sp.wilcoxon(model_results,benchmark_results)
+
+    #-------Box plot
+    fig, ax = plt.subplots()
+    ax.boxplot([model_results, benchmark_results], labels=['Model Results', 'Benchmark Results'])
+    plt.title('Box Plots of Two Distributions')
+    plt.savefig('C:/Users/chris/OneDrive/Documentos/GitHub/tatu-re/tatu_re/evaluation/results/box plot-'+str(year))
+    plt.close()
+
+    #-------Quantile Quantile Plots 
+    plt.figure()
+    sp.probplot(model_results, dist="norm", plot=plt)
+    plt.title("Q-Q Model Results")
+    plt.savefig('C:/Users/chris/OneDrive/Documentos/GitHub/tatu-re/tatu_re/evaluation/results/QQ Model-'+str(year))
+    plt.close()
+
+    plt.figure()
+    sp.probplot(benchmark_results, dist="norm", plot=plt)
+    plt.title("Q-Q Benchmark")
+    plt.savefig('C:/Users/chris/OneDrive/Documentos/GitHub/tatu-re/tatu_re/evaluation/results/QQ Benchmark-'+str(year))
+    plt.close()
+
+    return pValue_Welch, conf_interval, means, variances, pValue_Levene, pValue_Wilcoxon
+
+def simulate_portfolio(df, ticker="^N225"):
 
     begin_date = df.index[0]
-    initial_capital = 10000
+    initial_capital = 100000
 
     benchmark = Benchmark(initial_capital=initial_capital, start_date=begin_date, timeseries=df['Close'])
     portfolio = Portfolio(initial_capital=initial_capital, start_date=begin_date, benchmark=benchmark)
-    manager = LinearRegressionEngine()
+    manager = HiddenMarkovEngine()
+    # manager = LinearRegressionEngine()
     
     for index, row in df.iterrows():
     
