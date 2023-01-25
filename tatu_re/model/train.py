@@ -4,18 +4,20 @@ from tatu_re.model.hmm import HMMStockPredictor
 from tatu_re.model.utils import save_model
 from tatu_re.utils import get_data
 
+import numpy as np
 from datetime import datetime
 import pathlib
 import pickle
 import pandas as pd
 
 def train_data():
-    begin = datetime(1990,12,1)
+    begin = datetime(1990,3,1)
     end = datetime(2021,3,1)
-    df = pd.concat([get_data(begin, end, "SPY"),
-                    get_data(begin, end, "DAX.DE"),
-                    get_data(begin, end, "^BVSP")
-                    ])          
+    df = get_data(begin, end, "SPY")
+    # df = pd.concat([get_data(begin, end, "SPY"),
+    #                 get_data(begin, end, "DAX.DE")
+    #                 # get_data(begin, end, "^BVSP")
+    #                 ])   
     return df
 
 def train_model(save=True):
@@ -45,4 +47,4 @@ def train_hidden_markov_model(save=True):
     model.fit()
 
     if save:
-        save_model(filename="hmm_v1.sav", model=model)
+        save_model(filename="hmm_v2.sav", model=model)

@@ -96,14 +96,25 @@ class LinearRegressionEngine(RecommendationEngine):
 class HiddenMarkovEngine(RecommendationEngine):
     """Recommendation Engine based on Hidden Markov Model
     """
-    model = load_model("hmm_v1.sav")
+    model = load_model("hmm_v2_10_hidden_31635_963689263845_score.sav")
 
     def recommendation(self, simulation_date, price, portfolio, ticker):
+        u, high, low, score = self.model.predict(simulation_date, ticker)
+        print(f"u: {u}; score: {score}")
+        rec_thresh = 0.005
+        
+        if high > low :
+            if u > rec_thresh:
+                action = "buy"
+            elif u < rec_thresh:
+                action = "sell"
+            else:
+                action = "hold"
+        else:
+            action = "sell"
 
-        u, score = self.model.predict(simulation_date, ticker)
-
-        action = "buy" if u > 0 else "sell"
-
+        # action = "buy" if u > rec_thresh else "sell" if u < -rec_thresh else "hold"
+        
         _action, quantity = self.criteria_for_quantity_of_investment(action, price, portfolio, score)
 
         self.send_email(action, quantity)
@@ -115,8 +126,9 @@ class HiddenMarkovEngine(RecommendationEngine):
     def criteria_for_quantity_of_investment(self, action: str, price: float, portfolio: Portfolio, score: float):
         # assert score > 0
 
-        if score > 5:
-            certainty = min(score/20, 1)
+        if score > -20:
+            
+            certainty = max(min(score/50, 1), 0.2)
             print(certainty)
             if action == "buy":
                 max_quantity_to_buy = portfolio.in_cash*certainty // price
@@ -137,4 +149,4 @@ class HiddenMarkovEngine(RecommendationEngine):
         else:
             action, quantity = "hold", 0  # should do nothing
         
-        return action, quantity 
+        return action, quantity

@@ -50,14 +50,18 @@ def evaluate_one_year(year, ticker="DAX.DE"):
     model_results = []
     benchmark_results = []
     alfa = 0.05
-
+    f = open("final_results.csv", "a+")
+    f.write(f"\n Portfolio;S&P")
     for i, df_week in enumerate(df_splitted_in_weeks):
-
         in_asset_series, in_cash_series, benchmark = simulate_portfolio(df_week, ticker)
         total = np.add(in_cash_series,in_asset_series)
 
         model_results.extend(total)
         benchmark_results.extend(benchmark)
+        print(f"final result: Portfolio {model_results[-1]} | S&P {benchmark_results[-1]}")
+        f.write(f"\n{model_results[-1]};{benchmark_results[-1]}")
+    f.close()
+
 
     #-------Calculate metrics
     mean1 = st.fmean(model_results)
@@ -84,7 +88,7 @@ def evaluate_one_year(year, ticker="DAX.DE"):
     conf_interval = (mean_inferior, mean_upper)
     return pValue, conf_interval
 
-def simulate_portfolio(df, ticker="DAX.DE"):
+def simulate_portfolio(df, ticker="SPY"):
 
     begin_date = df.index[0]
     initial_capital = 10000
