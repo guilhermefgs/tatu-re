@@ -38,6 +38,8 @@ performance = pd.read_csv("timeseries.csv", index_col="Date")["Close"]
 performance = performance.rename("Portfolio")
 performance.index = pd.to_datetime(performance.index, utc=True)
 
+portfolio = pd.read_csv("cash_vs_asset.csv", index_col="Unnamed: 0")
+
 start   = performance.index[0]
 end     = performance.index[-1] 
 
@@ -58,4 +60,13 @@ df = pd.concat([benchmark, performance], axis=1, sort=True)
 
 fig = st.line_chart(df)
 
-# TODO add portfolio composition 
+# Portfolio Composition
+
+st.markdown("""
+
+## Portfolio Over Time
+
+""")
+
+st.line_chart(portfolio)
+

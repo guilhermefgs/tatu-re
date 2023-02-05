@@ -52,6 +52,16 @@ class Portfolio:
         self.plot_compare_benchmark(benchmark.index, total)
         self.plot_cash_vs_asset(benchmark.index)
 
+    def save_cash_vs_asset(self) -> None:
+        benchmark = self.benchmark.get_timeseries()
+        timeindex = benchmark.index
+        df = pd.DataFrame(index=timeindex.tolist())
+        df["Asset"] = self.in_asset_series
+        df["Cash"] = self.in_cash_series
+
+        df.to_csv("cash_vs_asset.csv")
+
+
     def plot_cash_vs_asset(self, timeindex) -> None:
         plt.figure(2, (16,8))
         plt.plot(timeindex, self.in_asset_series, "-b", label="In Asset")
