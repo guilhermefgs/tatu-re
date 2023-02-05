@@ -7,6 +7,10 @@ import streamlit as st
 
 from tatu_re.utils import get_data
 
+@st.cache
+def get_benchmark_data(start, end):
+    return get_data(start, end)["Close"].rename("S&P")
+
 # st.title("My Portfolio")
 st.set_page_config(
     page_title="Tatu RE",
@@ -23,7 +27,7 @@ col1.markdown("""
 
 """)
 
-col2.selectbox("Time Range", ["Weekly", "2 Weeks", "Monthly", "Yearly"]) # TODO implement different time ranges
+timespan = col2.selectbox("Time Range", ["Weekly", "2 Weeks", "Monthly", "Yearly"]) # TODO implement different time ranges
 
 p_value, return_metric, return_sp = st.columns(3)
 
@@ -43,14 +47,30 @@ portfolio = pd.read_csv("cash_vs_asset.csv", index_col="Unnamed: 0")
 start   = performance.index[0]
 end     = performance.index[-1] 
 
-benchmark = get_data(start, end)["Close"].rename("S&P")
+benchmark = get_benchmark_data(start, end)
 
 # Update absolute metrics value
 p_value.metric("Portfolio Value", "$ {:.2f} ".format(performance.iloc[-1]), delta="$ {:.2f} ".format(performance.iloc[-1] - performance.iloc[0]))
 
+try:
+    if timespan == "Weekly":
+        performance = performance.iloc[performance.index > performance.index[-5]]
+        benchmark = benchmark.iloc[benchmark.index > benchmark.index[-5]]
+    elif timespan == "2 Weeks":
+        performance = performance.iloc[performance.index > performance.index[-10]]
+        benchmark = benchmark.iloc[benchmark.index > benchmark.index[-10]]
+        
+    elif timespan == "Monthly":
+        performance = performance.iloc[performance.index > performance.index[-20]]
+        benchmark = benchmark.iloc[benchmark.index > benchmark.index[-20]]
+except Exception as e:
+    # usually when filtering intervals are too big 
+    print(e)
+
 # Normalize
 benchmark = (benchmark/benchmark.iloc[0] - 1)*100
 performance = (performance/performance.iloc[0] - 1)*100
+
 
 # Update percentual metrics
 return_metric.metric("Return", "{:.2f} %".format(performance[-1]))
