@@ -12,3 +12,10 @@ Execute the following commands
 $ cd tatu-re
 $ pip install -e .
 ```
+
+To deploy the dashboard online, execute the following commands in the main folder of the repository
+
+```bash
+$ gclond init
+$ gcloud app deploy app.yaml
+```
