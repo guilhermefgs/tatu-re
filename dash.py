@@ -36,7 +36,7 @@ st.markdown("""
 ## Load Data 
 performance = pd.read_csv("timeseries.csv", index_col="Date")["Close"]
 performance = performance.rename("Portfolio")
-performance.index = pd.to_datetime(performance.index)
+performance.index = pd.to_datetime(performance.index, utc=True)
 
 start   = performance.index[0]
 end     = performance.index[-1] 
