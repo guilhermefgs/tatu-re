@@ -1,0 +1,1 @@
+from tatu_re.model import train_model, train_hidden_markov_model

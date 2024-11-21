@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
-# data
-experiment/data
-experiment/results
+# model
+saved_models/
+*.ipynb
+results/

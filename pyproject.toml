@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tatu-re"
+version = "0.0.1"
+authors = [
+    {"name" = "Guilherme Fernandes Gonçalves Silva", "email" = "aateg.german@gmail.com"},
+    {"name" = "Caio Victor Gouveia Freitas", "email" = "caiofreitas@usp.br"},
+    {"name" = "Rodrigo Mardegam Morais ", "email" = "rodmorais@usp.br"},
+    {"name" = "Christian Leomil", "email" = "christianleomil@gmail.com"},
+]
+description = "An S&P500 recommendation engine for investment"
+keywords = ["investment", "quant"]
+
+requires-python = ">=3.7"
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+    "yfinance",
+    "ta",
+    "scipy",
+    "hmmlearn",
+]
+
+[project.scripts]
+    train-model = "tatu_re:train_model"
+    evaluate-model = "tatu_re:evaluate_total"
+    train-hmm = "tatu_re:train_hidden_markov_model"
